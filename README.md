@@ -73,7 +73,7 @@
 ![alt text](image.png)
 
 ## API 명세서
-[API](https://www.notion.so/2aae421455b380cd83a4ff01ed3e4727?v=2aae421455b381f198e7000cb8efdf03)
+[API](https://www.notion.so/SSAFY-ticketing-29ce421455b380979e27c36143cc9903?source=copy_link)
 
 
 
