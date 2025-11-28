@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.SystemMetricMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="metricId">
+        INSERT INTO system_metrics (timestamp, active_users, queue_length, cpu_usage, memory_usage, request_count, avg_response_time, server_id, created_at)
+        VALUES (#{timestamp}, #{activeUsers}, #{queueLength}, #{cpuUsage}, #{memoryUsage}, #{requestCount}, #{avgResponseTime}, #{serverId}, #{createdAt})
+    </insert>
+
+    <select id="findAll" resultType="SystemMetric">
+        SELECT * FROM system_metrics
+    </select>
+
+</mapper>

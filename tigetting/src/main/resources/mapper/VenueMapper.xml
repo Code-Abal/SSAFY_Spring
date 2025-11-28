@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.VenueMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="venueId">
+        INSERT INTO venues (venue_name, address, description, total_capacity, contact, created_at, updated_at)
+        VALUES (#{venueName}, #{address}, #{description}, #{totalCapacity}, #{contact}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update">
+        UPDATE venues
+        SET venue_name = #{venueName},
+            address = #{address},
+            description = #{description},
+            total_capacity = #{totalCapacity},
+            contact = #{contact},
+            updated_at = #{updatedAt}
+        WHERE venue_id = #{venueId}
+    </update>
+
+    <select id="findById" resultType="Venue">
+        SELECT * FROM venues WHERE venue_id = #{id}
+    </select>
+
+    <select id="findAll" resultType="Venue">
+        SELECT * FROM venues
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM venues WHERE venue_id = #{id}
+    </delete>
+
+    <select id="existsById" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM venues WHERE venue_id = #{id}
+    </select>
+
+</mapper>

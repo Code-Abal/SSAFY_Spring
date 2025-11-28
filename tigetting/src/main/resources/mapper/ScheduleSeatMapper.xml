@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.ScheduleSeatMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="seatId">
+        INSERT INTO schedule_seats (schedule_id, venue_seat_id, price, status, created_at, updated_at)
+        VALUES (#{schedule.scheduleId}, #{venueSeat.venueSeatId}, #{price}, #{status}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update">
+        UPDATE schedule_seats
+        SET price = #{price},
+            status = #{status},
+            updated_at = #{updatedAt}
+        WHERE seat_id = #{seatId}
+    </update>
+
+    <select id="findById" resultMap="ScheduleSeatResultMap">
+        SELECT * FROM schedule_seats WHERE seat_id = #{id}
+    </select>
+
+    <select id="findByScheduleId" resultMap="ScheduleSeatResultMap">
+        SELECT * FROM schedule_seats WHERE schedule_id = #{scheduleId}
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM schedule_seats WHERE seat_id = #{id}
+    </delete>
+
+    <resultMap id="ScheduleSeatResultMap" type="ScheduleSeat">
+        <id property="seatId" column="seat_id"/>
+        <result property="price" column="price"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="schedule" column="schedule_id" select="com.ssafy.tigetting.mapper.PerformanceScheduleMapper.findById"/>
+        <association property="venueSeat" column="venue_seat_id" select="com.ssafy.tigetting.mapper.VenueSeatMapper.findById"/>
+    </resultMap>
+
+</mapper>

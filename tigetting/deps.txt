@@ -1,0 +1,22 @@
+
+> Task :dependencies
+
+------------------------------------------------------------
+Root project 'tigetting' - Demo project for Spring Boot
+------------------------------------------------------------
+
+implementation - Implementation dependencies for the 'main' feature. (n)
++--- org.springframework.boot:spring-boot-starter-web (n)
++--- org.springframework.boot:spring-boot-starter-data-jpa (n)
++--- org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3 (n)
++--- org.springframework.boot:spring-boot-starter-data-redis (n)
++--- io.jsonwebtoken:jjwt-api:0.11.5 (n)
++--- org.springframework.boot:spring-boot-starter-security (n)
+\--- org.springframework.boot:spring-boot-starter-validation (n)
+
+(n) - A dependency or dependency configuration that cannot be resolved.
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+BUILD SUCCESSFUL in 1s
+1 actionable task: 1 executed

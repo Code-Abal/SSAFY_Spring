@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.BookingMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="bookingId">
+        INSERT INTO bookings (booking_number, user_id, schedule_id, seat_count, total_amount, status, expires_at, booked_at, cancelled_at, cancellation_reason, created_at, updated_at)
+        VALUES (#{bookingNumber}, #{user.userId}, #{schedule.scheduleId}, #{seatCount}, #{totalAmount}, #{status}, #{expiresAt}, #{bookedAt}, #{cancelledAt}, #{cancellationReason}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update">
+        UPDATE bookings
+        SET status = #{status},
+            cancelled_at = #{cancelledAt},
+            cancellation_reason = #{cancellationReason},
+            updated_at = #{updatedAt}
+        WHERE booking_id = #{bookingId}
+    </update>
+
+    <select id="findById" resultMap="BookingResultMap">
+        SELECT * FROM bookings WHERE booking_id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="BookingResultMap">
+        SELECT * FROM bookings
+    </select>
+
+    <select id="findByUserId" resultMap="BookingResultMap">
+        SELECT * FROM bookings WHERE user_id = #{userId}
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM bookings WHERE booking_id = #{id}
+    </delete>
+
+    <resultMap id="BookingResultMap" type="Booking">
+        <id property="bookingId" column="booking_id"/>
+        <result property="bookingNumber" column="booking_number"/>
+        <result property="seatCount" column="seat_count"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="status" column="status"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="bookedAt" column="booked_at"/>
+        <result property="cancelledAt" column="cancelled_at"/>
+        <result property="cancellationReason" column="cancellation_reason"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <association property="user" column="user_id" select="com.ssafy.tigetting.mapper.UserMapper.findById"/>
+        <association property="schedule" column="schedule_id" select="com.ssafy.tigetting.mapper.PerformanceScheduleMapper.findById"/>
+    </resultMap>
+
+</mapper>
