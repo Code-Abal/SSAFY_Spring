@@ -116,11 +116,12 @@ CREATE TABLE roles (
 -- 회원 정보 테이블
 CREATE TABLE users (
 	userid INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '기본 생성 id',
-    email VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL, -- 스프링에서 encoding 돼서 처리.
-    name VARCHAR(255) NOT NULL,
-    phone VARCHAR(50) NOT NULL,
-    roleid INT NOT NULL,
+    email VARCHAR(255) NOT NULL COMMENT '이메일',
+    password VARCHAR(255) NOT NULL COMMENT '비밀번호', -- 스프링에서 encoding 돼서 처리.
+    name VARCHAR(255) NOT NULL COMMENT '이름',
+    phone VARCHAR(50) NOT NULL COMMENT '전화번호',
+    roleid INT NOT NULL COMMENT '권한',
+    register DATETIME NOT NULL COMMENT '가입일',
     
     CONSTRAINT fk_user_role FOREIGN KEY (roleid) REFERENCES roles(roleid)
 );
