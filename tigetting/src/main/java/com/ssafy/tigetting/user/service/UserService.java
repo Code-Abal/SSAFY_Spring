@@ -1,7 +1,7 @@
-package com.ssafy.tigetting.service;
+package com.ssafy.tigetting.user.service;
 
 import com.ssafy.tigetting.mapper.UserMapper;
-import com.ssafy.tigetting.entity.User;
+import com.ssafy.tigetting.user.entity.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 

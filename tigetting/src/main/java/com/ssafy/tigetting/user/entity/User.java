@@ -1,5 +1,7 @@
-package com.ssafy.tigetting.entity;
+package com.ssafy.tigetting.user.entity;
 
+import com.ssafy.tigetting.entity.Booking;
+import com.ssafy.tigetting.entity.SeatLock;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

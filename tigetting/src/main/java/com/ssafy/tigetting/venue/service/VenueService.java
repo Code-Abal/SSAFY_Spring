@@ -1,8 +1,7 @@
-package com.ssafy.tigetting.service;
+package com.ssafy.tigetting.venue.service;
 
-import com.ssafy.tigetting.dto.VenueDto;
-import com.ssafy.tigetting.entity.Venue;
 import com.ssafy.tigetting.mapper.VenueMapper;
+import com.ssafy.tigetting.venue.entity.Venue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +17,14 @@ public class VenueService {
     private final VenueMapper venueMapper;
 
     // 모든 공연장 조회
-    public List<VenueDto> getAllVenues() {
+    public List<Venue> getAllVenues() {
         return venueMapper.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     // 공연장 ID로 조회
-    public VenueDto getVenueById(Long venueId) {
+    public Venue getVenueById(Long venueId) {
         Venue venue = venueMapper.findById(venueId)
                 .orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
         return convertToDto(venue);
@@ -33,7 +32,7 @@ public class VenueService {
 
     // 공연장 생성
     @Transactional
-    public VenueDto createVenue(VenueDto venueDto) {
+    public Venue createVenue(Venue venueDto) {
         Venue venue = Venue.builder()
                 .venueName(venueDto.getVenueName())
                 .address(venueDto.getAddress())
@@ -48,7 +47,7 @@ public class VenueService {
 
     // 공연장 수정
     @Transactional
-    public VenueDto updateVenue(Long venueId, VenueDto venueDto) {
+    public Venue updateVenue(Long venueId, Venue venueDto) {
         Venue venue = venueMapper.findById(venueId)
                 .orElseThrow(() -> new RuntimeException("Venue not found with id: " + venueId));
 
@@ -72,8 +71,8 @@ public class VenueService {
     }
 
     // Entity를 DTO로 변환
-    private VenueDto convertToDto(Venue venue) {
-        return VenueDto.builder()
+    private Venue convertToDto(Venue venue) {
+        return Venue.builder()
                 .venueId(venue.getVenueId())
                 .venueName(venue.getVenueName())
                 .address(venue.getAddress())

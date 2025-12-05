@@ -1,8 +1,8 @@
-package com.ssafy.tigetting.controller;
+package com.ssafy.tigetting.venue.controller;
 
-import com.ssafy.tigetting.dto.VenueDto;
+import com.ssafy.tigetting.venue.entity.Venue;
+import com.ssafy.tigetting.venue.service.VenueService;
 import lombok.RequiredArgsConstructor;
-import com.ssafy.tigetting.service.VenueService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,29 +18,29 @@ public class VenueController {
 
     // 모든 공연장 조회
     @GetMapping
-    public ResponseEntity<List<VenueDto>> getAllVenues() {
-        List<VenueDto> venues = venueService.getAllVenues();
+    public ResponseEntity<List<Venue>> getAllVenues() {
+        List<Venue> venues = venueService.getAllVenues();
         return ResponseEntity.ok(venues);
     }
 
     // 특정 공연장 조회
     @GetMapping("/{venueId}")
-    public ResponseEntity<VenueDto> getVenueById(@PathVariable Long venueId) {
-        VenueDto venue = venueService.getVenueById(venueId);
+    public ResponseEntity<Venue> getVenueById(@PathVariable Long venueId) {
+        Venue venue = venueService.getVenueById(venueId);
         return ResponseEntity.ok(venue);
     }
 
     // 공연장 생성
     @PostMapping
-    public ResponseEntity<VenueDto> createVenue(@RequestBody VenueDto venueDto) {
-        VenueDto createdVenue = venueService.createVenue(venueDto);
+    public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
+        Venue createdVenue = venueService.createVenue(venue);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
     }
 
     // 공연장 수정
     @PutMapping("/{venueId}")
-    public ResponseEntity<VenueDto> updateVenue(@PathVariable Long venueId, @RequestBody VenueDto venueDto) {
-        VenueDto updatedVenue = venueService.updateVenue(venueId, venueDto);
+    public ResponseEntity<Venue> updateVenue(@PathVariable Long venueId, @RequestBody Venue venue) {
+        Venue updatedVenue = venueService.updateVenue(venueId, venue);
         return ResponseEntity.ok(updatedVenue);
     }
 
