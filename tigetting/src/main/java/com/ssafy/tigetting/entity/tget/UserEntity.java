@@ -7,10 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/**
- * 회원 정보 테이블 Entity
- * 테이블명: users
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
