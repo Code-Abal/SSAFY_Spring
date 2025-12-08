@@ -1,4 +1,4 @@
-package com.ssafy.tigetting.dto.response;
+package com.ssafy.tigetting.dto.tget;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -26,7 +26,11 @@ public class UserDto {
 
     private String phone; // 전화번호
 
-    private String roleName; // 권한명 (roleId 대신)
+    private Role role; // 권한명 (roleId 대신)
 
     private LocalDateTime register; // 가입일
+
+    public enum Role {
+        USER, ADMIN
+    }
 }

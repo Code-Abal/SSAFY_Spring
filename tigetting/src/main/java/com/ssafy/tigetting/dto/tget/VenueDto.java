@@ -1,4 +1,4 @@
-package com.ssafy.tigetting.dto.response;
+package com.ssafy.tigetting.dto.tget;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VenueResponseDto {
+public class VenueDto {
 
     private String mt10id; // 공연장 id
 

@@ -6,6 +6,10 @@
       <excludeFolder url="file://$MODULE_DIR$/../../tigetting/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../tigetting/build" />
     </content>
+    <content url="file://$MODULE_DIR$/../../tigetting">
+      <excludeFolder url="file://$MODULE_DIR$/../../tigetting/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../tigetting/build" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

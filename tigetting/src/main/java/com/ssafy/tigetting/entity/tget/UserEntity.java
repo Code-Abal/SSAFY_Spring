@@ -27,7 +27,11 @@ public class UserEntity {
 
     private String phone; // 전화번호
 
-    private Integer roleId; // 권한 ID (FK -> roles)
+    private Role role; // 권한 ID (FK -> roles)
 
     private LocalDateTime register; // 가입일
+
+    public enum Role {
+        USER, ADMIN
+    }
 }
