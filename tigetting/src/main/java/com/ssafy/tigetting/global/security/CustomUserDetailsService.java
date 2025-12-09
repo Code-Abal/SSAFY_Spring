@@ -1,7 +1,6 @@
 package com.ssafy.tigetting.global.security;
 
 import com.ssafy.tigetting.mapper.UserMapper;
-import com.ssafy.tigetting.user.entity.User;
 import com.ssafy.tigetting.user.entity.UserEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserMapper userMapper;

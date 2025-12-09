@@ -43,10 +43,10 @@
 
     <form id="adminLoginForm">
         <div class="form-group">
-            <label for="usernameOrEmail">관리자 이메일 또는 사용자명</label>
+            <label for="userEmail">관리자 이메일 또는 사용자명</label>
             <input
-                    id="usernameOrEmail"
-                    name="usernameOrEmail"
+                    id="userEmail"
+                    name="userEmail"
                     value="admin@ssafy.com"
                     placeholder="관리자 계정을 입력하세요"
                     required>
@@ -90,7 +90,7 @@
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const usernameOrEmail = document.getElementById('usernameOrEmail').value;
+        const userEmail = document.getElementById('userEmail').value;
         const password = document.getElementById('password').value;
 
         // 버튼 비활성화 및 로딩 표시
@@ -103,7 +103,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    usernameOrEmail: usernameOrEmail,
+                    userEmail: userEmail,
                     password: password
                 })
             });

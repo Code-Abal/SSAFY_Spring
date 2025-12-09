@@ -14,15 +14,15 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    public UserEntity resolveUserFromEmail(String usernameOrEmail) {
-//        if (usernameOrEmail.contains("@")) {
+    public UserEntity resolveUserFromEmail(String userEmail) {
+//        if (userEmail.contains("@")) {
             // 이메일로 사용자 찾기
-            UserEntity user = userMapper.findByEmail(usernameOrEmail)
-                    .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다: " + usernameOrEmail));
+            UserEntity user = userMapper.findByEmail(userEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다: " + userEmail));
 
             return user;
 //        } else {
-//            User user = userMapper.findByUsername(usernameOrEmail)
+//            User user = userMapper.findByUsername(userEmail)
 //                    .orElseThrow(() -> new UsernameNotFoundException("해당 사용자명을 찾을 수 없습니다: " + usernameOrEmail));
 //            return user.getRole().getRoleName();
 //        }

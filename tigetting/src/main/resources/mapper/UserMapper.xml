@@ -8,7 +8,7 @@
     <!-- ✅ ResultMap: User + Role 매핑 -->
     <resultMap id="UserResultMap" type="com.ssafy.tigetting.user.entity.UserEntity">
         <!-- users.userid -->
-        <id property="userId" column="user_id"/>
+        <id property="userId" column="userid"/>
 
         <result property="email" column="email"/>
         <result property="password" column="password"/>
@@ -17,8 +17,8 @@
 
         <!-- ✅ Role 객체 매핑 (roles.roleid, roles.name) -->
         <association property="role" javaType="com.ssafy.tigetting.user.entity.RoleEntity">
-            <id property="roleId" column="role_id"/>
-            <result property="roleName" column="role_name"/>
+            <id property="roleId" column="roleid"/>
+            <result property="name" column="name"/>
         </association>
     </resultMap>
 
