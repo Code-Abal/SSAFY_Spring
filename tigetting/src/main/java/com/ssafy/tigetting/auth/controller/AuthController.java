@@ -11,6 +11,7 @@ import com.ssafy.tigetting.auth.dto.AuthResponse;
 import com.ssafy.tigetting.auth.dto.LoginRequest;
 import com.ssafy.tigetting.auth.service.AuthService;
 import com.ssafy.tigetting.dto.tget.UserRegisterDto;
+import com.ssafy.tigetting.dto.tget.UserUpdateDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest dto) {
-        System.out.println("로그인시도 들어옴");
+        System.out.println("로그인 시도 들어옴");
         return authService.login(dto);
     }
 
@@ -34,6 +35,16 @@ public class AuthController {
     public AuthResponse signup(@Valid @RequestBody UserRegisterDto dto) {
         System.out.println("회원가입 시도 들어옴");
         return authService.signup(dto);
+    }
+
+    @PostMapping("/modify")
+    public AuthResponse modify(@Valid @RequestBody UserUpdateDto dto) {
+        System.out.println("회원정보 수정 시도 들어옴");
+        System.out.println("Email: " + dto.getEmail());
+        System.out.println("Name: " + dto.getName());
+        System.out.println("Phone: " + dto.getPhone());
+        System.out.println("Has Password: " + (dto.getPassword() != null && !dto.getPassword().isEmpty()));
+        return authService.modify(dto);
     }
 
     @PostMapping("/logout")

@@ -43,6 +43,18 @@
         )
     </insert>
 
+    <!-- ✅ UPDATE -->
+    <update id="modify">
+        UPDATE users
+        SET
+            name = #{name},
+            phone = #{phone}
+            <if test="password != null and password != ''">
+                , password = #{password}
+            </if>
+        WHERE userid = #{userId}
+    </update>
+
     <!-- ✅ 조회: ID -->
     <select id="findById" resultMap="UserResultMap">
         SELECT
