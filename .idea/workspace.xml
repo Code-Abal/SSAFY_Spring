@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="03c6254b-39aa-46e6-a8f5-543d1c950438" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/mapper/PerformanceMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/mapper/PerformanceMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/performance/controller/PerformanceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/performance/controller/PerformanceController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/performance/service/PerformanceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/performance/service/PerformanceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tigetting/src/main/resources/mapper/PerformanceMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/resources/mapper/PerformanceMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/auth/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/auth/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/auth/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/auth/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/dto/tget/UserDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/dto/tget/UserDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/dto/tget/UserUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/dto/tget/UserUpdateDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/java/com/ssafy/tigetting/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tigetting/src/main/resources/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/tigetting/src/main/resources/mapper/UserMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,36 +63,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.tigetting 빌드.executor": "Run",
-    "Gradle.소스 다운로드.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.TigettingApplication.executor": "Run",
-    "git-widget-placeholder": "성원251217",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/SSAFY/SSAFY_Tigetting/framework_tigetting_t10",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.tigetting 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.소스 다운로드.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.TigettingApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;성원251218&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/SSAFY/SSAFY_Tigetting/framework_tigetting_t10&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="TigettingApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -116,7 +120,8 @@
       <option name="presentableId" value="Default" />
       <updated>1764920146354</updated>
       <workItem from="1764920147686" duration="8845000" />
-      <workItem from="1765430733942" duration="41810000" />
+      <workItem from="1765430733942" duration="46977000" />
+      <workItem from="1766024534361" duration="5528000" />
     </task>
     <servers />
   </component>
