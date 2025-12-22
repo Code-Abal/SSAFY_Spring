@@ -13,7 +13,6 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-
     private final UserMapper userMapper;
 
     public CustomUserDetailsService(UserMapper userMapper) {
@@ -30,8 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(user.getEmail())
                 .password(user.getPassword()) // BCrypt 해시 그대로
                 .authorities(
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName()))
-                )
+                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName())))
                 .build();
     }
 }

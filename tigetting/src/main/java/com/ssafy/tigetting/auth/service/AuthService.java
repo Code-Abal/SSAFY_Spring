@@ -3,7 +3,6 @@ package com.ssafy.tigetting.auth.service;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,13 +15,14 @@ import com.ssafy.tigetting.auth.dto.LoginRequest;
 import com.ssafy.tigetting.dto.tget.UserDto;
 import com.ssafy.tigetting.dto.tget.UserRegisterDto;
 import com.ssafy.tigetting.dto.tget.UserUpdateDto;
+import com.ssafy.tigetting.global.exception.AuthException;
+import com.ssafy.tigetting.global.exception.BusinessException;
+import com.ssafy.tigetting.global.exception.ErrorCode;
 import com.ssafy.tigetting.global.security.JwtUtil;
 import com.ssafy.tigetting.mapper.UserMapper;
 import com.ssafy.tigetting.user.entity.RoleEntity;
 import com.ssafy.tigetting.user.entity.UserEntity;
 import com.ssafy.tigetting.user.service.UserService;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthService {
@@ -43,25 +43,19 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest dto) {
-        UserEntity user = userService.resolveUserFromEmail(dto.getUserEmail());
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            dto.getUserEmail(), dto.getPassword()));
 
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getEmail(), dto.getPassword()));
+            UserEntity user = userService.resolveUserFromEmail(auth.getName());
+            String token = jwtUtil.generate(auth.getName());
 
-        String token = jwtUtil.generate(auth.getName());
+            return new AuthResponse(token, user.getRole().getName(), UserDto.from(user));
 
-        // UserEntity -> UserDto 변환
-        UserDto userDto = UserDto.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .phone(user.getPhone())
-                .role(UserDto.Role.valueOf(user.getRole().getName().toUpperCase())) // 대소문자 무시 처리
-                .register(user.getRegister())
-                .build();
-
-        // 토큰 + 사용자 정보 반환
-        return new AuthResponse(token, user.getRole().getName(), userDto);
+        } catch (Exception e) {
+            throw new AuthException(ErrorCode.AUTH_FAILED);
+        }
     }
 
     /**
@@ -73,7 +67,8 @@ public class AuthService {
     public AuthResponse signup(UserRegisterDto dto) {
         // 이메일 중복 확인
         if (userMapper.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("이미 가입된 이메일입니다: " + dto.getEmail());
+            throw new BusinessException(ErrorCode.EMAIL_DUPLICATED) {
+            };
         }
 
         // 비밀번호 인코딩
@@ -100,17 +95,8 @@ public class AuthService {
 
         // 자동 로그인 처리
         String token = jwtUtil.generate(newUser.getEmail());
-
         // UserEntity -> UserDto 변환
-        UserDto userDto = UserDto.builder()
-                .userId(newUser.getUserId())
-                .email(newUser.getEmail())
-                .name(newUser.getName())
-                .phone(newUser.getPhone())
-                .role(UserDto.Role.valueOf(newUser.getRole().getName()))
-                .register(newUser.getRegister())
-                .build();
-
+        UserDto userDto = UserDto.from(newUser);
         return new AuthResponse(token, "USER", userDto);
     }
 
@@ -125,9 +111,9 @@ public class AuthService {
         // 이메일로 사용자 조회
         UserEntity existingUser = userService.resolveUserFromEmail(dto.getEmail());
         if (existingUser == null) {
-            throw new IllegalArgumentException("존재하지 않는 사용자입니다: " + dto.getEmail());
+            throw new AuthException(ErrorCode.USER_NOT_FOUND);
         }
-        
+
         System.out.println("=== 조회한 사용자 정보 ===");
         System.out.println("User ID: " + existingUser.getUserId());
         System.out.println("Email: " + existingUser.getEmail());
@@ -137,11 +123,11 @@ public class AuthService {
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             // 현재 비밀번호 확인
             if (dto.getCurrentPassword() == null || dto.getCurrentPassword().isEmpty()) {
-                throw new IllegalArgumentException("현재 비밀번호를 입력해주세요");
+                throw new AuthException(ErrorCode.INVALID_REQUEST);
             }
-            
+
             if (!passwordEncoder.matches(dto.getCurrentPassword(), existingUser.getPassword())) {
-                throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다");
+                throw new AuthException(ErrorCode.PASSWORD_MISMATCH);
             }
 
             // 새 비밀번호 인코딩
@@ -160,56 +146,68 @@ public class AuthService {
 
         // DB 업데이트
         userMapper.modify(existingUser);
-        
+
         System.out.println("=== DB 업데이트 완료 ===");
 
         // UserEntity -> UserDto 변환
-        UserDto userDto = UserDto.builder()
-                .userId(existingUser.getUserId())
-                .email(existingUser.getEmail())
-                .name(existingUser.getName())
-                .phone(existingUser.getPhone())
-                .role(UserDto.Role.valueOf(existingUser.getRole().getName()))
-                .register(existingUser.getRegister())
-                .build();
+        UserDto userDto = UserDto.from(existingUser);
+
         // 기존 토큰 그대로 사용 (사용자 정보만 업데이트)
         String token = jwtUtil.generate(existingUser.getEmail());
-        
-        return new AuthResponse(token, existingUser.getRole().getName(), userDto);
+
+        return new AuthResponse(token, userDto.getRole().name(), userDto);
     }
 
-    public ResponseEntity<?> logout(HttpServletRequest request, Authentication auth) {
+    public Map<String, Object> logout(String token, Authentication auth) {
         String username = auth != null ? auth.getName() : "anonymous";
-        System.out.println("로그아웃 들어옴");
-        // Authorization 헤더에서 토큰 추출
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
 
-            try {
-                // 토큰 만료 시간 가져오기
-                long expirationTime = jwtUtil.extractClaims(token).getExpiration().getTime();
-                long timeLeft = (expirationTime - System.currentTimeMillis()) / 1000 / 60; // 분 단위
+        long expirationTime = jwtUtil.extractClaims(token)
+                .getExpiration()
+                .getTime();
 
-                return ResponseEntity.ok(Map.of(
-                        "message", "로그아웃 완료",
-                        "username", username,
-                        "tokenTimeLeft", timeLeft + "분",
-                        "timestamp", LocalDateTime.now(),
-                        "success", true));
-            } catch (Exception e) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "error", "토큰 처리 중 오류 발생",
-                        "message", e.getMessage(),
-                        "username", username,
-                        "success", false));
-            }
-        }
+        long timeLeft = (expirationTime - System.currentTimeMillis()) / 1000 / 60;
 
-        return ResponseEntity.ok(Map.of(
+        return Map.of(
                 "message", "로그아웃 완료",
                 "username", username,
-                "timestamp", LocalDateTime.now(),
-                "success", true));
+                "tokenTimeLeft", timeLeft + "분",
+                "timestamp", LocalDateTime.now());
     }
+
+    // public ResponseEntity<?> logout(HttpServletRequest request, Authentication
+    // auth) {
+    // String username = auth != null ? auth.getName() : "anonymous";
+    // System.out.println("로그아웃 들어옴");
+    // // Authorization 헤더에서 토큰 추출
+    // String authHeader = request.getHeader("Authorization");
+    // if (authHeader != null && authHeader.startsWith("Bearer ")) {
+    // String token = authHeader.substring(7);
+
+    // try {
+    // // 토큰 만료 시간 가져오기
+    // long expirationTime = jwtUtil.extractClaims(token).getExpiration().getTime();
+    // long timeLeft = (expirationTime - System.currentTimeMillis()) / 1000 / 60; //
+    // 분 단위
+
+    // return ResponseEntity.ok(Map.of(
+    // "message", "로그아웃 완료",
+    // "username", username,
+    // "tokenTimeLeft", timeLeft + "분",
+    // "timestamp", LocalDateTime.now(),
+    // "success", true));
+    // } catch (Exception e) {
+    // return ResponseEntity.badRequest().body(Map.of(
+    // "error", "토큰 처리 중 오류 발생",
+    // "message", e.getMessage(),
+    // "username", username,
+    // "success", false));
+    // }
+    // }
+
+    // return ResponseEntity.ok(Map.of(
+    // "message", "로그아웃 완료",
+    // "username", username,
+    // "timestamp", LocalDateTime.now(),
+    // "success", true));
+    // }
 }

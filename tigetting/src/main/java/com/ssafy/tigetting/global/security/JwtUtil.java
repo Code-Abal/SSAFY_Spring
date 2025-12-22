@@ -1,11 +1,16 @@
 package com.ssafy.tigetting.global.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.ssafy.tigetting.global.exception.AuthException;
+import com.ssafy.tigetting.global.exception.ErrorCode;
 
 import java.security.Key;
 import java.util.Date;
@@ -64,11 +69,19 @@ public class JwtUtil {
      * 3. 토큰이 유효하지 않으면 예외 발생
      */
     public Claims extractClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+        } catch (ExpiredJwtException e) {
+            throw new AuthException(ErrorCode.AUTH_FAILED);
+
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthException(ErrorCode.TOKEN_INVALID);
+        }
     }
 
     /*

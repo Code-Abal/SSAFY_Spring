@@ -2,9 +2,12 @@ package com.ssafy.tigetting.dto.tget;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.tigetting.user.entity.UserEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -12,7 +15,7 @@ import lombok.NoArgsConstructor;
  * - password 필드 제외 (보안)
  * - roleName 포함 (roleId 대신)
  */
-@Data
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -32,5 +35,16 @@ public class UserDto {
 
     public enum Role {
         USER, ADMIN, BUSINESS
+    }
+
+    public static UserDto from(UserEntity user) {
+        return UserDto.builder()
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .role(Role.valueOf(user.getRole().getName()))
+                .register(user.getRegister())
+                .build();
     }
 }

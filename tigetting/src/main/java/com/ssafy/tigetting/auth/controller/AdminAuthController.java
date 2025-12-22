@@ -3,10 +3,10 @@ package com.ssafy.tigetting.auth.controller;
 import com.ssafy.tigetting.auth.dto.AuthResponse;
 import com.ssafy.tigetting.auth.dto.LoginRequest;
 import com.ssafy.tigetting.global.security.JwtUtil;
+import com.ssafy.tigetting.global.security.TokenExtractor;
 import com.ssafy.tigetting.user.entity.UserEntity;
 import com.ssafy.tigetting.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Tag(name = "AdminAuth", description = "인증 관련 API")
+@Tag(name = "AdminAuth", description = "관리자 인증 API")
 @RestController
 @RequestMapping("/admin/auth")
 public class AdminAuthController {
@@ -41,47 +41,37 @@ public class AdminAuthController {
      * 관리자 로그인
      * ADMIN 권한이 있는 사용자만 로그인 허용
      */
-    @Operation( summary = "로그인", description = "이메일로 로그인 합니다.")
+    @Operation(summary = "로그인", description = "이메일로 로그인 합니다.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "로그인 성공"),
-        @ApiResponse(responseCode = "401", description = "인증 실패 (잘못된 이메일 또는 비밀번호)"),
-        @ApiResponse(responseCode = "403", description = "관리자(ADMIN) 권한이 필요합니다"),
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 실패 (잘못된 이메일 또는 비밀번호)"),
+            @ApiResponse(responseCode = "403", description = "관리자(ADMIN) 권한이 필요합니다"),
     })
     @PostMapping("/login")
     public ResponseEntity<?> adminLogin(@Valid @RequestBody LoginRequest dto) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            dto.getUserEmail(),
-                            dto.getPassword()
-                    )
-            );
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        dto.getUserEmail(),
+                        dto.getPassword()));
 
-            // 인증 성공 후 권한 확인
-            boolean isAdmin = auth.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        // // 인증 성공 후 권한 확인
+        // boolean isAdmin = auth.getAuthorities().stream()
+        // .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
-            if (!isAdmin) {
-                return ResponseEntity.status(403).body(Map.of(
-                        "error", "Forbidden",
-                        "message", "관리자 권한이 필요합니다",
-                        "timestamp", LocalDateTime.now()
-                ));
-            }
+        // if (!isAdmin) {
+        // return ResponseEntity.status(403).body(Map.of(
+        // "error", "Forbidden",
+        // "message", "관리자 권한이 필요합니다",
+        // "timestamp", LocalDateTime.now()));
+        // }
 
-            // JWT 토큰 생성
-            String token = jwtUtil.generate(auth.getName());
+        // 인증 성공 + ADMIN 권한 통과 상태
+        UserEntity admin = userService.resolveUserFromEmail(auth.getName());
 
-            // 관리자 로그인 성공 응답
-            return ResponseEntity.ok(new AuthResponse(token, "ADMIN"));
+        // JWT 토큰 생성
+        String token = jwtUtil.generate(admin.getEmail());
 
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body(Map.of(
-                    "error", "Unauthorized",
-                    "message", "관리자 로그인 실패: " + e.getMessage(),
-                    "timestamp", LocalDateTime.now()
-            ));
-        }
+        return ResponseEntity.ok(AuthResponse.of(admin, token));
     }
 
     /**
@@ -90,53 +80,29 @@ public class AdminAuthController {
      */
     @Operation(summary = "로그아웃", description = "JWT 토큰을 기반으로 관리자 로그아웃을 수행")
     @ApiResponses({
-        @ApiResponse(
-                responseCode = "200",
-                description = "로그아웃 성공 또는 토큰 없음 (정상 처리)"),
-        @ApiResponse(
-                responseCode = "400",
-                description = "JWT 토큰 파싱 오류 (만료/변조/형식 오류 등)")
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공 또는 토큰 없음 (정상 처리)"),
+            @ApiResponse(responseCode = "400", description = "JWT 토큰 파싱 오류 (만료/변조/형식 오류 등)")
     })
     @PostMapping("/logout")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> adminLogout(HttpServletRequest request, Authentication authentication) {
-        String adminUsername = authentication.getName();
+        String token = TokenExtractor.extract(request);
 
-        // Authorization 헤더에서 토큰 추출
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+        String admin = authentication.getName();
 
-            try {
-                // 토큰 정보 확인 (선택사항)
-                long expirationTime = jwtUtil.extractClaims(token).getExpiration().getTime();
-                long timeLeft = (expirationTime - System.currentTimeMillis()) / 1000 / 60; // 분 단위
+        long expirationTime = jwtUtil.extractClaims(token)
+                .getExpiration()
+                .getTime();
 
-                return ResponseEntity.ok(Map.of(
-                        "message", "관리자 로그아웃 완료",
-                        "admin", adminUsername,
-                        "tokenTimeLeft", timeLeft + "분",
-                        "timestamp", LocalDateTime.now(),
-                        "redirectTo", "/admin/login.html",
-                        "success", true
-                ));
-            } catch (Exception e) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "error", "토큰 처리 중 오류 발생",
-                        "message", e.getMessage(),
-                        "admin", adminUsername,
-                        "success", false
-                ));
-            }
-        }
+        long timeLeft = (expirationTime - System.currentTimeMillis()) / 1000 / 60;
 
-        // 토큰이 없는 경우에도 성공 응답
         return ResponseEntity.ok(Map.of(
                 "message", "관리자 로그아웃 완료",
-                "admin", adminUsername,
+                "admin", admin,
+                "tokenTimeLeft", timeLeft + "분",
                 "timestamp", LocalDateTime.now(),
-                "success", true
-        ));
+                "redirectTo", "/admin/login.html",
+                "success", true));
     }
 
     /**
@@ -155,7 +121,6 @@ public class AdminAuthController {
                 "admin", adminUsername,
                 "role", admin.getRole().getName(),
                 "isActive", true,
-                "timestamp", LocalDateTime.now()
-        ));
+                "timestamp", LocalDateTime.now()));
     }
 }
