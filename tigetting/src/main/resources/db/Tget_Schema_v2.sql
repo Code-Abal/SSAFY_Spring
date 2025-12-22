@@ -74,11 +74,18 @@ CREATE TABLE performances (
     genreid INT COMMENT '장르 ID',
     prfstate VARCHAR(20) COMMENT '공연 상태',
     mt10id VARCHAR(100) COMMENT '공연장 ID',
+    userid INT COMMENT '회원번호',
+    poster_image MEDIUMBLOB NULL COMMENT '업로드된 포스터 이미지',
+    poster_type VARCHAR(50) NULL COMMENT '이미지 MIME 타입',
     -- seatid INT COMMENT '좌석 id',
     
     CONSTRAINT fk_performance_genre FOREIGN KEY (genreid) REFERENCES genres(genreid),
-    CONSTRAINT fk_performance_venue FOREIGN KEY (mt10id) REFERENCES venues(mt10id)
+    CONSTRAINT fk_performance_venue FOREIGN KEY (mt10id) REFERENCES venues(mt10id),
+    CONSTRAINT fk_performance_user FOREIGN KEY (userid) REFERENCES users(userid)
 );
+
+ALTER TABLE performances 
+ADD COLUMN user_id INT NULL; 
 
 -- 공연 상세 정보 테이블 (1:1 관계)
 CREATE TABLE performance_details (
