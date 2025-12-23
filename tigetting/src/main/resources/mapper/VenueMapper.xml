@@ -42,19 +42,14 @@
         ORDER BY fcltynm
     </select>
 
-    <select id="findByRegion" resultType="com.ssafy.tigetting.venue.dto.VenueDto">
+    <select id="findByRegion" parameterType="com.ssafy.tigetting.venue.dto.VenueRequest"
+            resultType="com.ssafy.tigetting.venue.dto.VenueDto">
         SELECT
-            v.mt10id,
-            v.fcltynm,
-            v.sidonm,
-            v.gugunnm,
-            v.region,
+            v.mt10id, v.fcltynm, v.sidonm, v.gugunnm, v.region, v.la, v.lo,
             COUNT(p.mt20id) as performanceCount
         FROM venues v
         LEFT JOIN performances p ON v.mt10id = p.mt10id
-            <if test="genreId != null">
                 AND p.genreid = #{genreId}
-            </if>
         WHERE v.region = #{region}
         GROUP BY v.mt10id, v.fcltynm, v.sidonm, v.gugunnm, v.region
         HAVING COUNT(p.mt20id) >= 1
