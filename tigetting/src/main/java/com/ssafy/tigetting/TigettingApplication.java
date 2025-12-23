@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.ssafy.tigetting.mapper")
+@MapperScan("com.ssafy.tigetting")
 public class TigettingApplication {
 
 	public static void main(String[] args) {
