@@ -45,7 +45,8 @@ CREATE TABLE venues (
     mt13cnt INT DEFAULT 0 COMMENT '공연장 내 공연장 수',
     fcltychartr VARCHAR(100) COMMENT '시설 특성',
     sidonm VARCHAR(50) COMMENT '시도명',
-    gugunnm VARCHAR(50) COMMENT '구군명'
+    gugunnm VARCHAR(50) COMMENT '구군명',
+    region VARCHAR(20) COMMENT '권역'
 );
 
 -- 공연장 상세 정보 테이블 (1:1 관계)

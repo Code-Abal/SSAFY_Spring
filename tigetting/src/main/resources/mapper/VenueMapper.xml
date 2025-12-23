@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.tigetting.mapper.VenueMapper">
+<mapper namespace="com.ssafy.tigetting.venue.mapper.VenueMapper">
 
     <insert id="save" useGeneratedKeys="true" keyProperty="venueId">
         INSERT INTO venues (venue_name, address, description, total_capacity, contact, created_at, updated_at)
@@ -28,17 +28,34 @@
         SELECT * FROM venues
     </select>
 
-    <select id="findByArea" resultType="com.ssafy.tigetting.dto.tget.VenueDto">
-        SELECT 
+    <select id="findByArea" resultType="com.ssafy.tigetting.venue.dto.VenueDto">
+        SELECT
             mt10id,
             fcltynm,
             sidonm,
             gugunnm,
             mt13cnt,
-            fcltychartr
-        FROM venues 
+            fcltychartr,
+            region
+        FROM venues
         WHERE sidonm LIKE CONCAT('%', #{area}, '%')
         ORDER BY fcltynm
+    </select>
+
+    <select id="findByRegion" resultType="com.ssafy.tigetting.venue.dto.VenueDto">
+        SELECT
+            v.mt10id,
+            v.fcltynm,
+            v.sidonm,
+            v.gugunnm,
+            v.region,
+            COUNT(p.mt20id) as performanceCount
+        FROM venues v
+        LEFT JOIN performances p ON v.mt10id = p.mt10id
+        WHERE v.region = #{region}
+        GROUP BY v.mt10id, v.fcltynm, v.sidonm, v.gugunnm, v.region
+        HAVING COUNT(p.mt20id) >= 1
+        ORDER BY v.fcltynm
     </select>
 
     <select id="findAllAreas" resultType="String">

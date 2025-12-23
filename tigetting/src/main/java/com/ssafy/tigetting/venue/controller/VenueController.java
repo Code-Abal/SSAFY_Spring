@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.tigetting.dto.tget.VenueDto;
+import com.ssafy.tigetting.venue.dto.VenueDto;
 import com.ssafy.tigetting.venue.entity.Venue;
 import com.ssafy.tigetting.venue.service.VenueService;
 
@@ -33,11 +33,11 @@ public class VenueController {
         return ResponseEntity.ok(venues);
     }
 
-    // 지역별 공연장 조회
-    @GetMapping("/area/{area}")
-    public ResponseEntity<List<VenueDto>> getVenuesByArea(@PathVariable String area) {
-        System.out.println("🔍 지역별 공연장 조회 요청 - 지역: " + area);
-        List<VenueDto> venues = venueService.getVenuesByArea(area);
+    // 권역별 공연장 조회 (서울, 경기/인천, 충청/강원, 대구/경북, 부산/경남, 광주/전라, 제주, 기타)
+    @GetMapping("/region/{region}")
+    public ResponseEntity<List<VenueDto>> getVenuesByRegion(@PathVariable String region) {
+        System.out.println("🔍 권역별 공연장 조회 요청 - 권역: " + region);
+        List<VenueDto> venues = venueService.getVenuesByRegion(region);
         System.out.println("✅ 조회된 공연장 수: " + venues.size());
         return ResponseEntity.ok(venues);
     }

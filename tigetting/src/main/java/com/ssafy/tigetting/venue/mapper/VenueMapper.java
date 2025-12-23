@@ -1,11 +1,11 @@
-package com.ssafy.tigetting.mapper;
+package com.ssafy.tigetting.venue.mapper;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.ssafy.tigetting.dto.tget.VenueDto;
+import com.ssafy.tigetting.venue.dto.VenueDto;
 import com.ssafy.tigetting.venue.entity.Venue;
 
 @Mapper
@@ -20,7 +20,11 @@ public interface VenueMapper {
 
     List<VenueDto> findByArea(String area);
 
+    List<VenueDto> findByRegion(String region);
+
     List<String> findAllAreas();
+
+    List<String> findAreasByKeyword(String keyword);
 
     void deleteById(Long id);
 

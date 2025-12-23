@@ -1,6 +1,8 @@
 package com.ssafy.tigetting.performance.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,6 +39,18 @@ public class PerformanceController {
     @GetMapping("/{id}")
     public ResponseEntity<PerformanceDetailDto> getPerformanceDetail(@PathVariable String id) {
         return ResponseEntity.ok(performanceService.getPerformanceDetail(id));
+    }
+
+    @GetMapping("/{id}/queue")
+    public ResponseEntity<Map<String, Object>> getQueue(@PathVariable String id) {
+        // 랜덤 대기 인원 생성 (0~10명)
+        int randomQueue = (int) (Math.random() * 3) + 1;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("queueNumber", randomQueue);
+        response.put("performanceId", id);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/my")

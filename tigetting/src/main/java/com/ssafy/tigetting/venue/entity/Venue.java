@@ -40,6 +40,10 @@ public class Venue {
     private String fcltychartr;
     private String sidonm;
     private String gugunnm;
+    private String region;
+
+    // 조회 시 계산되는 필드
+    private Integer performanceCount;
 
     private List<Performance> performances;
 

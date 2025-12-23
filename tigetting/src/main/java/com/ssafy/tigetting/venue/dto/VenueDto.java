@@ -1,4 +1,4 @@
-package com.ssafy.tigetting.dto.tget;
+package com.ssafy.tigetting.venue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +21,8 @@ public class VenueDto {
 
     private String fcltynm; // 공연장명
 
+    private Integer performanceCount; // 공연장 내 공연 수
+
     private Integer mt13cnt; // 공연장 내 공연장 수
 
     private String fcltychartr; // 시설 특성
@@ -28,6 +30,8 @@ public class VenueDto {
     private String sidonm; // 시도명
 
     private String gugunnm; // 구군명
+
+    private String region; // 권역
 
     private String adres; // 주소
 

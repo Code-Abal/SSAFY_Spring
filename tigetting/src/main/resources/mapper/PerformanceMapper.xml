@@ -131,7 +131,7 @@
         <result property="status" column="status"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
-        <association property="venue" column="venue_id" select="com.ssafy.tigetting.mapper.VenueMapper.findById"/>
+        <association property="venue" column="venue_id" select="com.ssafy.tigetting.venue.mapper.VenueMapper.findById"/>
     </resultMap>
 
 </mapper>

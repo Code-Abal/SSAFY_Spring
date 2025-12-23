@@ -39,6 +39,11 @@ public class PerformanceService {
             .orElseThrow(() -> new RuntimeException("공연을 찾을 수 없습니다: " + id));
     }
 
+    public PerformanceDetailDto getQueue(String id) {
+        return performanceMapper.findDetailById(id)
+            .orElseThrow(() -> new RuntimeException("공연을 찾을 수 없습니다: " + id));
+    }
+
     public List<PerformanceDto> getMyPerformances(String email) {
         Integer userId = userMapper.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + email))

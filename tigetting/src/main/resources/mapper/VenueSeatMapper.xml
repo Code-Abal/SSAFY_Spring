@@ -35,7 +35,7 @@
         <result property="seatCol" column="seat_col"/>
         <result property="seatGrade" column="seat_grade"/>
         <result property="createdAt" column="created_at"/>
-        <association property="venue" column="venue_id" select="com.ssafy.tigetting.mapper.VenueMapper.findById"/>
+        <association property="venue" column="venue_id" select="com.ssafy.tigetting.venue.mapper.VenueMapper.findById"/>
     </resultMap>
 
 </mapper>
