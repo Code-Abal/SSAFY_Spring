@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.AdminUserMapper">
+
+    <!-- 유저 목록 조회 (페이징, 검색, 필터링) -->
+    <select id="getUserList" resultType="map">
+        SELECT
+            u.userid,
+            u.name,
+            u.email,
+            u.phone,
+            u.roleid,
+            COALESCE(r.name, 'USER') as role,
+            u.register,
+            COUNT(DISTINCT res.reservation_id) as reservationCount
+        FROM users u
+        LEFT JOIN roles r ON u.roleid = r.roleid
+        LEFT JOIN reservations res ON u.userid = res.userid
+        <where>
+            <if test="search != null and search != ''">
+                AND (u.name LIKE CONCAT('%', #{search}, '%')
+                OR u.email LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="roleid != null">
+                AND u.roleid = #{roleid}
+            </if>
+        </where>
+        GROUP BY u.userid, u.name, u.email, u.phone, u.roleid, r.name, u.register
+        ORDER BY u.register DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 유저 총 개수 (필터링 적용) -->
+    <select id="getUserCount" resultType="int">
+        SELECT COUNT(DISTINCT u.userid)
+        FROM users u
+        <where>
+            <if test="search != null and search != ''">
+                AND (u.name LIKE CONCAT('%', #{search}, '%')
+                OR u.email LIKE CONCAT('%', #{search}, '%'))
+            </if>
+            <if test="roleid != null">
+                AND u.roleid = #{roleid}
+            </if>
+        </where>
+    </select>
+
+    <!-- 유저 ID로 조회 -->
+    <select id="getUserById" resultType="map">
+        SELECT
+            u.userid,
+            u.name,
+            u.email,
+            u.phone,
+            u.roleid,
+            r.name as role,
+            u.register
+        FROM users u
+        LEFT JOIN roles r ON u.roleid = r.roleid
+        WHERE u.userid = #{userid}
+    </select>
+
+    <!-- 유저 정보 수정 -->
+    <update id="updateUser">
+        UPDATE users
+        <set>
+            <if test="data.name != null">name = #{data.name},</if>
+            <if test="data.email != null">email = #{data.email},</if>
+            <if test="data.phone != null">phone = #{data.phone},</if>
+            <if test="data.roleid != null">roleid = #{data.roleid},</if>
+        </set>
+        WHERE userid = #{userid}
+    </update>
+
+    <!-- 유저 삭제 -->
+    <delete id="deleteUser">
+        DELETE FROM users
+        WHERE userid = #{userid}
+    </delete>
+
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.AdminVenueMapper">
+
+    <!-- 공연장 목록 조회 (페이징, 검색, 필터링) -->
+    <select id="getVenueList" resultType="map">
+        SELECT
+            v.mt10id,
+            v.fcltynm,
+            v.sidonm,
+            v.gugunnm,
+            v.region,
+            v.la,
+            v.lo,
+            v.mt13cnt,
+            v.fcltychartr
+        FROM venues v
+        <where>
+            <if test="search != null and search != ''">
+                AND v.fcltynm LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="region != null and region != ''">
+                AND v.region = #{region}
+            </if>
+        </where>
+        ORDER BY v.fcltynm
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 공연장 총 개수 (필터링 적용) -->
+    <select id="getVenueCount" resultType="int">
+        SELECT COUNT(*)
+        FROM venues v
+        <where>
+            <if test="search != null and search != ''">
+                AND v.fcltynm LIKE CONCAT('%', #{search}, '%')
+            </if>
+            <if test="region != null and region != ''">
+                AND v.region = #{region}
+            </if>
+        </where>
+    </select>
+
+    <!-- 공연장 ID로 기본 정보 조회 -->
+    <select id="getVenueById" resultType="map">
+        SELECT
+            v.mt10id,
+            v.fcltynm,
+            v.sidonm,
+            v.gugunnm,
+            v.region,
+            v.la,
+            v.lo,
+            v.mt13cnt,
+            v.fcltychartr
+        FROM venues v
+        WHERE v.mt10id = #{mt10id}
+    </select>
+
+    <!-- 공연장 상세 정보 조회 -->
+    <select id="getVenueDetails" resultType="map">
+        SELECT
+            adres,
+            telno,
+            seatscale
+        FROM venue_details
+        WHERE mt10id = #{mt10id}
+    </select>
+    
+    <!-- 공연장 정보 수정 -->
+    <update id="updateVenue">
+        UPDATE venues
+        <set>
+            <if test="data.fcltynm != null">fcltynm = #{data.fcltynm},</if>
+            <if test="data.mt13cnt != null">mt13cnt = #{data.mt13cnt},</if>
+            <if test="data.fcltychartr != null">fcltychartr = #{data.fcltychartr},</if>
+            <if test="data.sidonm != null">sidonm = #{data.sidonm},</if>
+            <if test="data.gugunnm != null">gugunnm = #{data.gugunnm},</if>
+            <if test="data.la != null">la = #{data.la},</if>
+            <if test="data.lo != null">lo = #{data.lo},</if>
+            <if test="data.region != null">region = #{data.region},</if>
+        </set>
+        WHERE mt10id = #{mt10id}
+    </update>
+    
+    <!-- 공연장 삭제 -->
+    <delete id="deleteVenue">
+        DELETE FROM venues
+        WHERE mt10id = #{mt10id}
+    </delete>
+    
+    <!-- 공연장을 사용하는 공연 개수 조회 -->
+    <select id="getPerformanceCountByVenue" resultType="int">
+        SELECT COUNT(*)
+        FROM performances
+        WHERE mt10id = #{mt10id}
+    </select>
+
+</mapper>

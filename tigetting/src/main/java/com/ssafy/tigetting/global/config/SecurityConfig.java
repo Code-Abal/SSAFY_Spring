@@ -97,7 +97,8 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
 
                 // Swagger UI 및 API 문서 접근 허용
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**")
+                .permitAll()
 
                 // 헬스체크 허용
                 .requestMatchers("/actuator/**").permitAll()
@@ -107,6 +108,12 @@ public class SecurityConfig {
 
                 // AI 추천 API 허용
                 .requestMatchers("/api/recommendations/**").permitAll()
+
+                // 예매된 좌석 조회 허용
+                .requestMatchers("/reservations/occupied/**").permitAll()
+
+                // 대기열 토큰 만료 허용
+                .requestMatchers("/queue/expire").permitAll()
 
                 // 공연장 관련 GET 요청은 로그인 불필요 (지도/조회용)
                 .requestMatchers(HttpMethod.GET, "/api/venues/**").permitAll()

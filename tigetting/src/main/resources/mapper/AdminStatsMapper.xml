@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.tigetting.mapper.AdminStatsMapper">
+
+    <!-- 전체 통계 조회 -->
+    <select id="getOverallStats" resultType="com.ssafy.tigetting.admin.dto.AdminStatsResponse">
+        SELECT
+            (SELECT COUNT(*) FROM performances) as totalPerformances,
+            (SELECT COUNT(*) FROM venues) as totalVenues,
+            (SELECT COUNT(*) FROM users) as totalUsers,
+            (SELECT COUNT(*) FROM reservations) as totalReservations,
+            (SELECT COUNT(*) FROM reservations WHERE DATE(reserved_at) = CURDATE()) as todayReservations
+    </select>
+
+    <!-- 카테고리별 공연 통계 -->
+    <select id="getCategoryStats" resultType="com.ssafy.tigetting.admin.dto.CategoryStatsDto">
+        SELECT
+            g.genreid as genreId,
+            g.genrenm as genreName,
+            COUNT(p.mt20id) as count
+        FROM genres g
+        LEFT JOIN performances p ON g.genreid = p.genreid
+        GROUP BY g.genreid, g.genrenm
+        HAVING COUNT(p.mt20id) > 0
+        ORDER BY count DESC
+    </select>
+
+    <!-- 지역별 공연 통계 -->
+    <select id="getRegionStats" resultType="com.ssafy.tigetting.admin.dto.RegionStatsDto">
+        SELECT
+            area,
+            COUNT(*) as count
+        FROM performances
+        WHERE area IS NOT NULL AND area != ''
+        GROUP BY area
+        ORDER BY count DESC
+    </select>
+
+</mapper>

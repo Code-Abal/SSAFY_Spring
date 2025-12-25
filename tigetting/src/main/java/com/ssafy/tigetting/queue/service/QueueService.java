@@ -406,6 +406,28 @@ public class QueueService {
         return queueToken.isActiveForBooking();
     }
 
+    @Transactional
+    public void expireToken(String tokenStr) {
+        log.info("=== Explicit Token Expiration Request: {} ===", tokenStr);
+        Optional<QueueToken> optionalToken = queueTokenMapper.findByToken(tokenStr);
+
+        if (optionalToken.isEmpty()) {
+            log.warn("Token not found during explicit expiration (likely already expired/cleaned): {}", tokenStr);
+            return;
+        }
+
+        QueueToken token = optionalToken.get();
+
+        // Only expire if currently active or waiting
+        if (token.getStatus().equals(QueueToken.TokenStatus.ACTIVE.name()) ||
+                token.getStatus().equals(QueueToken.TokenStatus.WAITING.name())) {
+
+            // Passing 0L/1L since logic no longer uses it for key
+            releaseSession(Long.valueOf(token.getUserId()), token.getPerformanceId(), 1L);
+        }
+    }
+
+    @Transactional
     public void useToken(String token) {
         QueueToken queueToken = queueTokenMapper.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Token not found"));
@@ -422,7 +444,8 @@ public class QueueService {
 
     @Transactional
     public void releaseSession(Long userId, String performanceId, Long scheduleId) {
-        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId + ":" + scheduleId;
+        // scheduleId ignored for key consistency
+        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId;
         String activeTokensKey = ACTIVE_TOKENS_KEY_PREFIX + performanceId;
 
         log.info("=== Release Session: User={}, Perf={} ===", userId, performanceId);
@@ -491,13 +514,13 @@ public class QueueService {
     private void processTimeout(String heartbeatKey) {
         try {
             String[] parts = heartbeatKey.replace(HEARTBEAT_KEY_PREFIX, "").split(":");
-            if (parts.length >= 3) {
+            if (parts.length >= 2) {
                 Long userId = Long.parseLong(parts[0]);
                 String performanceId = parts[1]; // String ID
-                Long scheduleId = Long.parseLong(parts[2]);
+                // Long scheduleId = Long.parseLong(parts[2]); // Removed from key
 
                 log.warn("Session Timeout - User: {}", userId);
-                releaseSession(userId, performanceId, scheduleId);
+                releaseSession(userId, performanceId, 0L);
             }
         } catch (Exception e) {
             log.error("Error in timeout processing", e);
@@ -581,13 +604,14 @@ public class QueueService {
     }
 
     private void startHeartbeat(Long userId, String performanceId, Long scheduleId) {
-        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId + ":" + scheduleId;
+        // Simply exclude scheduleId from key
+        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId;
         redisTemplate.opsForValue().set(heartbeatKey, LocalDateTime.now().toString(),
                 Duration.ofSeconds(maxInactiveSeconds));
     }
 
     public void updateHeartbeat(Long userId, String performanceId, Long scheduleId) {
-        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId + ":" + scheduleId;
+        String heartbeatKey = HEARTBEAT_KEY_PREFIX + userId + ":" + performanceId;
         redisTemplate.opsForValue().set(heartbeatKey, LocalDateTime.now().toString(),
                 Duration.ofSeconds(maxInactiveSeconds));
     }

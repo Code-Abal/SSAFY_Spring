@@ -1,8 +1,9 @@
 -- Database creation handled manually
 -- use Tget; commented out to use CLI argument
-use Tget;
+use tget;
 
 -- 모든 테이블 삭제
+DROP TABLE IF EXISTS reservations CASCADE;
 DROP TABLE IF EXISTS performance_styurls CASCADE;
 DROP TABLE IF EXISTS performance_details CASCADE;
 DROP TABLE IF EXISTS users_performances CASCADE;

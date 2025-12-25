@@ -14,6 +14,11 @@ spring:
     username: ssafy
     password: ssafy
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      timeout: 3000ms
   mail:
     host: smtp.gmail.com
     port: 587

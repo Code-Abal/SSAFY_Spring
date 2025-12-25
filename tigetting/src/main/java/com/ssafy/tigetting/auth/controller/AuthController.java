@@ -64,28 +64,26 @@ public class AuthController {
     @PostMapping("/send-verification")
     public ResponseEntity<Map<String, Object>> sendVerificationCode(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        
+
         if (email == null || email.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "이메일을 입력해주세요."
-            ));
+                    "success", false,
+                    "message", "이메일을 입력해주세요."));
         }
 
         try {
             emailService.sendVerificationEmail(email);
-            
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "인증 코드가 이메일로 발송되었습니다.");
             response.put("expiryMinutes", 5);
-            
+
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of(
-                "success", false,
-                "message", "이메일 발송에 실패했습니다. 다시 시도해주세요."
-            ));
+                    "success", false,
+                    "message", "이메일 발송에 실패했습니다. 다시 시도해주세요."));
         }
     }
 
@@ -94,26 +92,23 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> verifyCode(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String code = request.get("code");
-        
+
         if (email == null || code == null) {
             return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "이메일과 인증 코드를 입력해주세요."
-            ));
+                    "success", false,
+                    "message", "이메일과 인증 코드를 입력해주세요."));
         }
 
         boolean isValid = emailService.verifyCode(email, code);
-        
+
         if (isValid) {
             return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "이메일 인증이 완료되었습니다."
-            ));
+                    "success", true,
+                    "message", "이메일 인증이 완료되었습니다."));
         } else {
             return ResponseEntity.badRequest().body(Map.of(
-                "success", false,
-                "message", "인증 코드가 일치하지 않거나 만료되었습니다."
-            ));
+                    "success", false,
+                    "message", "인증 코드가 일치하지 않거나 만료되었습니다."));
         }
     }
 
@@ -127,15 +122,32 @@ public class AuthController {
     public ResponseEntity<UserUpdateResponse> modifyUserInfo(
             @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody UserUpdateRequest request) {
-        
+
         // JWT 토큰에서 이메일 추출
         String token = authHeader.replace("Bearer ", "");
         String email = jwtUtil.extractUsername(token);
-        
+
         // 회원정보 수정
         UserUpdateResponse response = userService.updateUserInfo(email, request);
-        
+
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "회원정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
+    @GetMapping("/profile")
+    public ResponseEntity<com.ssafy.tigetting.auth.dto.UserProfileResponse> getUserProfile(
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        String email = jwtUtil.extractUsername(token);
+
+        com.ssafy.tigetting.user.entity.UserEntity user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(com.ssafy.tigetting.auth.dto.UserProfileResponse.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .build());
     }
 
     @Operation(summary = "사용자 로그아웃", description = "JWT 토큰을 기반으로 사용자 로그아웃을 수행합니다.")

@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.tigetting.reservation.dto.ReservationDto;
 import com.ssafy.tigetting.reservation.dto.ReservationDto.SeatDto;
+import com.ssafy.tigetting.reservation.dto.ReservationDto.SeatDto;
 import com.ssafy.tigetting.reservation.dto.ReservationResponseDto;
+import com.ssafy.tigetting.reservation.dto.OccupiedSeatDto; // New Import
 import com.ssafy.tigetting.reservation.entity.ReservationEntity;
 import com.ssafy.tigetting.reservation.entity.ReservationStatus;
 import com.ssafy.tigetting.reservation.mapper.ReservationMapper;
@@ -28,9 +30,16 @@ public class ReservationService {
         private final ReservationMapper reservationMapper;
         private final UserMapper userMapper;
         private final PerformanceMapper performanceMapper;
+        private final com.ssafy.tigetting.queue.service.QueueService queueService;
 
         @Transactional
         public void createReservation(String email, ReservationDto dto) {
+                // 1. Validate & Consume Queue Token
+                if (dto.getToken() != null && !dto.getToken().isEmpty()) {
+                        // This will validate ownership, status, and then mark as USED + update Redis
+                        queueService.useToken(dto.getToken());
+                }
+
                 UserEntity user = userMapper.findByEmail(email)
                                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
@@ -132,5 +141,15 @@ public class ReservationService {
                 }
 
                 reservationMapper.updateStatusByGroupId(reservationGroupId, ReservationStatus.CANCELLED);
+        }
+
+        public List<OccupiedSeatDto> getOccupiedSeats(String performanceId) {
+                return reservationMapper.findOccupiedSeats(performanceId).stream()
+                                .map(entity -> OccupiedSeatDto.builder()
+                                                .section(entity.getSeatSection())
+                                                .row(entity.getSeatRow())
+                                                .number(entity.getSeatNumber())
+                                                .build())
+                                .collect(Collectors.toList());
         }
 }

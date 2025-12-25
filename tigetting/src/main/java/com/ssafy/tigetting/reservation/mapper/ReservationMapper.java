@@ -23,4 +23,7 @@ public interface ReservationMapper {
     int updateStatusByGroupId(
             @Param("groupId") Long groupId,
             @Param("status") ReservationStatus status);
+
+    /* 예매된 좌석 조회 */
+    List<ReservationEntity> findOccupiedSeats(@Param("performanceId") String performanceId);
 }

@@ -119,4 +119,25 @@ public class QueueController {
                         return ResponseEntity.ok("Heartbeat Processed");
                 }
         }
+
+        @PostMapping("/expire")
+        @Operation(summary = "대기열 토큰 만료 (사용자 이탈 시)")
+        public ResponseEntity<String> expireToken(
+                        // @RequestBody Map<String, String> request, // Simple map for token
+                        @RequestBody TokenActivateRequest request) { // Reusing Request with token field, or better just
+                                                                     // a
+
+                // Validate user if needed, but token itself is enough validation for now
+                // UserEntity user = getUserFromHeader(authHeader);
+
+                // Using TokenActivateRequest as it has 'token' field, or just create a simple
+                // one.
+                // Let's use the token string directly if passed properly, but JSON body is
+                // standard.
+                // Using a simple Map key for flexibility or reusing existing DTO.
+                // Using TokenActivateRequest for convenience as it has "token" field.
+
+                queueService.expireToken(request.getToken());
+                return ResponseEntity.ok("Token Expired");
+        }
 }

@@ -67,4 +67,14 @@
         WHERE reservation_group_id = #{groupId}
     </update>
 
+    <select id="findOccupiedSeats" resultType="com.ssafy.tigetting.reservation.entity.ReservationEntity">
+        SELECT 
+            seat_section as seatSection,
+            seat_row as seatRow,
+            seat_number as seatNumber
+        FROM reservations 
+        WHERE mt20id = #{performanceId} 
+        AND status != 'CANCELLED'
+    </select>
+
 </mapper>

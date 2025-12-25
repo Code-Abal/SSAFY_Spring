@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.tigetting.global.security.JwtUtil;
 import com.ssafy.tigetting.reservation.dto.ReservationDto;
 import com.ssafy.tigetting.reservation.dto.ReservationResponseDto;
+import com.ssafy.tigetting.reservation.dto.OccupiedSeatDto;
 import com.ssafy.tigetting.reservation.service.ReservationService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,12 +36,7 @@ public class ReservationController {
         String token = authHeader.replace("Bearer ", "");
         String email = jwtUtil.extractUsername(token);
 
-        // TODO: Validate Queue Token here if necessary.
-        // For now, we assume the user has passed the queue if they can make this
-        // request.
-        // In a real scenario, we should verify reservationDto.getToken() with
-        // QueueService.
-
+        // Validate and process reservation
         reservationService.createReservation(email, reservationDto);
 
         return ResponseEntity.ok().build();
@@ -69,5 +65,10 @@ public class ReservationController {
         reservationService.cancelReservation(email, reservationId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/occupied/{performanceId}")
+    public ResponseEntity<List<OccupiedSeatDto>> getOccupiedSeats(@PathVariable String performanceId) {
+        return ResponseEntity.ok(reservationService.getOccupiedSeats(performanceId));
     }
 }
