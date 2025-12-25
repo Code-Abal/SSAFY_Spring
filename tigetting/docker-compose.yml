@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  tget-db:
+    image: mysql:8.0
+    container_name: tget-db
+    ports:
+      - "3307:3306"
+    command: 
+      - --character-set-server=utf8mb4 
+      - --collation-server=utf8mb4_unicode_ci 
+      - --character-set-client-handshake=FALSE
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tget
+      MYSQL_USER: ssafy
+      MYSQL_PASSWORD: ssafy
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    volumes:
+      - ./db_data:/var/lib/mysql
+
+  tget-redis:
+    image: redis:alpine
+    container_name: tget-redis
+    ports:
+      - "6379:6379"
